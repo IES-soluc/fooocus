@@ -1,7 +1,55 @@
-version: '3.8'
+# ------------------------
+#  Ancoras
+# ------------------------
+x-restart-policy: &restart_policy
+  restart: no
 
+x-healthcheck-base: &healthcheck_base
+  interval: 15s
+  timeout: 5s
+  retries: 5
+  start_period: 60s
+
+# ------------------------
+#  Volumes
+# ------------------------
+volumes:
+  fooocus_models:
+    driver: local
+  fooocus_outputs:
+    driver: local
+
+# ------------------------
+#  Networks
+# ------------------------
+networks:
+  tegridade:
+    name: tegridade
+    external: true
+
+# ------------------------
+#  Services
+# ------------------------
 services:
-  hello-world:
-    image: python:3.10-slim
-    container_name: hello-world-app
-    command: python -c "print('Hello World!'); print('Funcionando!')"
+  fooocus:
+    image: konieshadow/fooocus-api:latest
+    container_name: fooocus-app
+    <<: *restart_policy
+    volumes:
+      - fooocus_models:/app/repositories/Fooocus/models
+      - fooocus_outputs:/app/repositories/Fooocus/outputs
+    environment:
+      - CMDARGS=--always-cpu --preset realistic
+      - NVIDIA_VISIBLE_DEVICES=void
+    networks:
+      - tegridade
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7865/"]
+      <<: *healthcheck_base
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=tegridade" 
+      - "traefik.http.routers.fooocus.rule=Host(`fooocus.${DOMAIN}`)"
+      - "traefik.http.routers.fooocus.entrypoints=websecure"
+      - "traefik.http.routers.fooocus.tls.certresolver=cloudflare"
+      - "traefik.http.services.fooocus.loadbalancer.server.port=7865"
