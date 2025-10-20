@@ -1,7 +1,0 @@
-# Ignorar pastas de modelos e saídas
-models/
-outputs/
-
-# Ignorar arquivos de ambiente Python
-__pycache__/
-*.pyc
