@@ -32,7 +32,7 @@ networks:
 # ------------------------
 services:
   fooocus:
-    image: konieshadow/fooocus-api:latest
+    image: whitehara/fooocus:latest
     container_name: fooocus-app
     <<: *restart_policy
     volumes:
