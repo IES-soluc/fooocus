@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  fooocus:
+    # 'build: .' instrui o compose a construir a imagem usando o Dockerfile na pasta atual.
+    build: .
+    container_name: fooocus
+    restart: unless-stopped
+    ports:
+      # Mapeia a porta 7865 do seu servidor para a porta 7865 do contêiner.
+      # Se a porta 7865 já estiver em uso, você pode mudar o primeiro número (ex: "8080:7865").
+      - "7865:7865"
+    volumes:
+      # Mapeia pastas locais para dentro do contêiner para persistir os dados.
+      # Assim, seus modelos e imagens geradas não se perdem se o contêiner for recriado.
+      - ./models:/app/models
+      - ./outputs:/app/outputs
+    deploy:
+      resources:
+        reservations:
+          devices:
+            # Esta seção habilita o acesso à GPU NVIDIA.
+            # Se você não tiver uma GPU, remova toda a seção 'deploy'.
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
