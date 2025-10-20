@@ -2,6 +2,6 @@ version: '3.8'
 
 services:
   hello-world:
-    build: .
-    image: python-hello-world:latest
+    image: python:3.10-slim
     container_name: hello-world-app
+    command: python -c "print('Hello World!'); print('Funcionando!')"
