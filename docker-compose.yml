@@ -38,6 +38,8 @@ services:
     volumes:
       - fooocus_models:/app/repositories/Fooocus/models
       - fooocus_outputs:/app/repositories/Fooocus/outputs
+    ports:
+      - "7865:7865"
     environment:
       - CMDARGS=--always-cpu --preset realistic
       - NVIDIA_VISIBLE_DEVICES=void
